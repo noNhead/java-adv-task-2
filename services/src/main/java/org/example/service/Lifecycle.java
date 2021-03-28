@@ -16,7 +16,7 @@ public class Lifecycle {
      * В конце программы распечатать итоговые балансы по счетам.
      */
 
-    public void lifecycle(){
+    public void process(){
         ExecutorService service = Executors.newFixedThreadPool(MAX_THREAD_IN_POOL);
 
         //some operation
