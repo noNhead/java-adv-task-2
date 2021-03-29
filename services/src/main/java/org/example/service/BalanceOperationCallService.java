@@ -1,12 +1,16 @@
 package org.example.service;
 
-import org.example.UserGroup;
+import org.example.User;
+import org.example.dao.DataAccessObject;
+
+import java.util.Map;
 
 
 public class BalanceOperationCallService {
-    private final UserGroup userGroup;
+    private final DataAccessObject dataAccessObject = new DataAccessObject();
+    private final Map<Long, User> userGroup;
 
-    public BalanceOperationCallService(UserGroup userGroup) {
+    public BalanceOperationCallService(Map<Long, User> userGroup) {
         this.userGroup = userGroup;
     }
 
@@ -14,20 +18,25 @@ public class BalanceOperationCallService {
      * Добавляет средства на счёт
      */
     public synchronized void increaseValueInUser(Long id, Long added){
-        userGroup.increaseMoneyValue(id, added);
+        User user = userGroup.get(id);
+        user.increaseBalance(added);
+        dataAccessObject.setUserCard(user);
     }
 
     /**
      * Убавляет средства со счёта
      */
     public synchronized void decreaseValueInUser(Long id, Long subtrahend){
-        userGroup.decreaseMoneyValue(id, subtrahend);
+        User user = userGroup.get(id);
+        user.decreaseBalance(subtrahend);
+        dataAccessObject.setUserCard(user);
     }
 
     /**
      * Переводит средства с одного счёта на другой
      */
     public synchronized void transferValue(Long idDecrease, Long idIncrease, Long transferAmount){
-        userGroup.transferMoneyValue(idDecrease, idIncrease, transferAmount);
+        decreaseValueInUser(idDecrease, transferAmount);
+        increaseValueInUser(idIncrease, transferAmount);
     }
 }

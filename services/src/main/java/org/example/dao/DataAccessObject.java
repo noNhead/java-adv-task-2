@@ -16,18 +16,16 @@ public class DataAccessObject {
      * @return возвращает объект класса User.class
      */
     public User getUserCard(Long id){
-        return utils.deserialize(id.toString() + ".json");
+        return utils.deserialize(id.toString() + ".usr");
     }
 
     /**
      * записывает карту через вызов метода сериализцаии в util.Utils
-     * @param id id пользователя
      * @param user карточка пользователя
      */
-    public void setUserCard(Long id, User user){
-        utils.serialize(id.toString() + ".json", user);
+    public void setUserCard(User user){
+        utils.serialize(user.getId().toString() + ".usr", user);
     }
-
 
     /**
      * Получает все id и записывает их в Map<Long id, User user>
