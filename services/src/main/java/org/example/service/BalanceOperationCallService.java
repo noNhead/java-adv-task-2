@@ -3,33 +3,47 @@ package org.example.service;
 import org.example.User;
 import org.example.dao.DataAccessObject;
 
-import java.util.Map;
+import java.util.List;
 
 
 public class BalanceOperationCallService {
     private final DataAccessObject dataAccessObject = new DataAccessObject();
-    private final Map<Long, User> userGroup;
+    private final List<Long> usersId;
 
-    public BalanceOperationCallService(Map<Long, User> userGroup) {
-        this.userGroup = userGroup;
+    public BalanceOperationCallService() {
+        this.usersId = dataAccessObject.getAllUserCardName();
     }
 
     /**
      * Добавляет средства на счёт
      */
     public synchronized void increaseValueInUser(Long id, Long added){
-        User user = userGroup.get(id);
-        user.increaseBalance(added);
-        dataAccessObject.setUserCard(user);
+        for (Long v: usersId) {
+            if (v.equals(id)) {
+                User user = dataAccessObject.getUserCard(id);
+                user.increaseBalance(added);
+                System.out.println(user.getId() + " | " + user.getUsername() + " | " + user.getBalance());
+                dataAccessObject.setUserCard(user);
+                return;
+            }
+        }
+        System.out.println("Такого пользователя не существует");
     }
 
     /**
      * Убавляет средства со счёта
      */
     public synchronized void decreaseValueInUser(Long id, Long subtrahend){
-        User user = userGroup.get(id);
-        user.decreaseBalance(subtrahend);
-        dataAccessObject.setUserCard(user);
+        for (Long v: usersId) {
+            if (v.equals(id)) {
+                User user = dataAccessObject.getUserCard(id);
+                user.decreaseBalance(subtrahend);
+                System.out.println(user.toString());
+                dataAccessObject.setUserCard(user);
+                return;
+            }
+        }
+        System.out.println("Такого пользователя не существует");
     }
 
     /**
@@ -38,5 +52,9 @@ public class BalanceOperationCallService {
     public synchronized void transferValue(Long idDecrease, Long idIncrease, Long transferAmount){
         decreaseValueInUser(idDecrease, transferAmount);
         increaseValueInUser(idIncrease, transferAmount);
+    }
+
+    public synchronized void newUserCard(User user){
+        dataAccessObject.setUserCard(user);
     }
 }

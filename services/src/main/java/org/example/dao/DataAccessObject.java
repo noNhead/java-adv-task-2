@@ -3,9 +3,9 @@ package org.example.dao;
 import org.example.User;
 import org.example.utils.Utils;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
+
 
 public class DataAccessObject {
     private final Utils utils = new Utils();
@@ -16,7 +16,7 @@ public class DataAccessObject {
      * @return возвращает объект класса User.class
      */
     public User getUserCard(Long id){
-        return utils.deserialize(id.toString() + ".usr");
+        return utils.deserialize(getPath() + "/" + id.toString() + ".usr");
     }
 
     /**
@@ -24,26 +24,38 @@ public class DataAccessObject {
      * @param user карточка пользователя
      */
     public void setUserCard(User user){
-        utils.serialize(user.getId().toString() + ".usr", user);
+        utils.serialize(getPath() + "/" +user.getId().toString() + ".usr", user);
     }
 
     /**
-     * Получает все id и записывает их в Map<Long id, User user>
+     * Получает все id и записывает их в List<Long id>
      * @return который потом и возвращает
      */
-    public Map<Long, User> getAllUserCardName(){
-        File file = new File("");
+    public List<Long> getAllUserCardName(){
+        File file = new File(getPath());
         String[] fileNames = file.list();
         if (fileNames == null) {
             return null;
         }
 
-        Map<Long, User> users = new HashMap<>();
+        List<Long> ids = new ArrayList<>();
         for (String value: fileNames) {
             String[] strings = value.split("\\.");
-            User user = getUserCard(Long.valueOf(strings[0]));
-            users.put(Long.valueOf(strings[0]), user);
+            ids.add(Long.valueOf(strings[0]));
         }
-        return users;
+        return ids;
+    }
+
+    public String getPath(){
+        String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
+        String propertyPath = rootPath + "config.properties";
+        Properties properties = new Properties();
+        try (FileInputStream fileInputStream = new FileInputStream(propertyPath)){
+            properties.load(fileInputStream);
+            return properties.getProperty("userListFolder");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

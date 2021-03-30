@@ -2,24 +2,25 @@ package org.example.service.operation;
 
 import org.example.service.BalanceOperationCallService;
 
-public class OperationTransfer implements Runnable {
-    private final BalanceOperationCallService balanceOperationCallService;
-    private final Long idOutput;
-    private final Long idInput;
-    private final Long amount;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Random;
 
-    OperationTransfer(BalanceOperationCallService balanceOperationCallService,
-                      Long idOutput,
-                      Long idInput,
-                      Long amount){
+import static org.example.utils.Const.*;
+
+public class OperationTransfer implements Runnable {
+    private final Random random = SecureRandom.getInstanceStrong();
+    private final BalanceOperationCallService balanceOperationCallService;
+
+    public OperationTransfer(BalanceOperationCallService balanceOperationCallService) throws NoSuchAlgorithmException {
         this.balanceOperationCallService = balanceOperationCallService;
-        this.idOutput = idOutput;
-        this.idInput = idInput;
-        this.amount = amount;
     }
 
     @Override
     public void run() {
+        Long idOutput = (long) this.random.nextInt(MAX_USER_CARDS + 1);
+        Long idInput = (long) this.random.nextInt(MAX_USER_CARDS + 1);
+        Long amount = (long) this.random.nextInt(MAX_TRANSFER - MIN_TRANSFER + 1) + MIN_TRANSFER;
         this.balanceOperationCallService.transferValue(idOutput, idInput, amount);
     }
 }
