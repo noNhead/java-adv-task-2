@@ -1,6 +1,8 @@
 package org.example.utils;
 
 import org.example.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.FileInputStream;
@@ -9,6 +11,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class Utils {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
     /**
      * Сериализация в бинарный код
      * @param path путь к файлу
@@ -19,7 +22,7 @@ public class Utils {
              ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
             objectOutputStream.writeObject(user);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.warn(String.valueOf(e));
         }
     }
 
@@ -33,7 +36,7 @@ public class Utils {
              ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
             return (User) objectInputStream.readObject();
         } catch (ClassNotFoundException | IOException e) {
-            e.printStackTrace();
+            LOGGER.warn(String.valueOf(e));
             return null;
         }
     }

@@ -18,9 +18,10 @@ import static org.example.utils.Const.*;
 public class Lifecycle {
     public static final int MAX_THREAD_IN_POOL = 20;
 
-    final Random random = SecureRandom.getInstanceStrong();
+    private final Random random;
 
     public Lifecycle() throws NoSuchAlgorithmException {
+        this.random = SecureRandom.getInstanceStrong();
     }
 
     /**
@@ -61,6 +62,7 @@ public class Lifecycle {
                 new Thread(operationTransfer).start();
             }
         }
+
 
         service.shutdown();
     }

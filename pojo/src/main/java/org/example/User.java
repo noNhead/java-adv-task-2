@@ -3,6 +3,7 @@ package org.example;
 import java.io.Serializable;
 
 public class User implements Serializable {
+    private static final long serialVersionUID = 1L;
     private Long id;
     private String username;
     private Long balance;
@@ -46,5 +47,14 @@ public class User implements Serializable {
 
     public void decreaseBalance(Long decreaseNumber) {
         this.balance -= decreaseNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", balance=" + balance +
+                '}';
     }
 }

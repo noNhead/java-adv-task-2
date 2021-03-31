@@ -2,11 +2,14 @@ package org.example.service;
 
 import org.example.User;
 import org.example.dao.DataAccessObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 
 public class BalanceOperationCallService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BalanceOperationCallService.class);
     private final DataAccessObject dataAccessObject = new DataAccessObject();
     private final List<Long> usersId;
 
@@ -22,12 +25,13 @@ public class BalanceOperationCallService {
             if (v.equals(id)) {
                 User user = dataAccessObject.getUserCard(id);
                 user.increaseBalance(added);
-                System.out.println(user.getId() + " | " + user.getUsername() + " | " + user.getBalance());
+                LOGGER.info("The method of adding funds from the user's account was called, " +
+                        "\ndata after the change {}", user);
                 dataAccessObject.setUserCard(user);
                 return;
             }
         }
-        System.out.println("Такого пользователя не существует");
+        LOGGER.warn("This user does not exist");
     }
 
     /**
@@ -38,12 +42,14 @@ public class BalanceOperationCallService {
             if (v.equals(id)) {
                 User user = dataAccessObject.getUserCard(id);
                 user.decreaseBalance(subtrahend);
-                System.out.println(user.toString());
+
+                LOGGER.info("The method for subtracting funds from the user's account was called," +
+                        "\ndata after the change: {}", user);
                 dataAccessObject.setUserCard(user);
                 return;
             }
         }
-        System.out.println("Такого пользователя не существует");
+        LOGGER.warn("This user does not exist");
     }
 
     /**
