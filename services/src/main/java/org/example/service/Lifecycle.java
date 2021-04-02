@@ -8,6 +8,7 @@ import org.example.service.operation.OperationTransfer;
 
 import java.io.File;
 import java.security.NoSuchAlgorithmException;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,7 +45,7 @@ public class Lifecycle {
 
         //генерация новых карт пользователя для первого запуска
         File folder = new File(dataAccessObject.getPath());
-        if (!(folder.isDirectory() && folder.list().length > 0)){
+        if (!(folder.isDirectory() && Objects.requireNonNull(folder.list()).length > 0)){
             for (int i = 0; i < MAX_USER_CARDS; i++) {
                 new Thread(operationNewUserCard).start();
             }
