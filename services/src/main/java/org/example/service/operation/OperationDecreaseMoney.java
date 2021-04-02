@@ -1,21 +1,16 @@
 package org.example.service.operation;
 
-
-import org.example.exception.UserNotFoundException;
 import org.example.service.BalanceOperationCallService;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.Random;
 
 import static org.example.utils.Const.*;
 
 public class OperationDecreaseMoney implements Runnable {
     private final BalanceOperationCallService balanceOperationCallService;
-    private final Random random = SecureRandom.getInstanceStrong();
+    private final Random random = new Random();
 
-    public OperationDecreaseMoney(BalanceOperationCallService balanceOperationCallService)
-            throws NoSuchAlgorithmException {
+    public OperationDecreaseMoney(BalanceOperationCallService balanceOperationCallService) {
         this.balanceOperationCallService = balanceOperationCallService;
     }
 
@@ -23,10 +18,6 @@ public class OperationDecreaseMoney implements Runnable {
     public void run() {
         Long id = (long) this.random.nextInt(MAX_USER_CARDS + 1);
         Long amount = (long) this.random.nextInt(MAX_TRANSFER - MIN_TRANSFER + 1) + MIN_TRANSFER;
-        try {
-            this.balanceOperationCallService.decreaseValueInUser(id, amount);
-        } catch (UserNotFoundException e) {
-            e.printStackTrace();
-        }
+        this.balanceOperationCallService.decreaseValueInUser(id, amount);
     }
 }
