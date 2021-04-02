@@ -42,7 +42,7 @@ public class BalanceOperationCallService {
             if (v.equals(id)) {
                 User user = dataAccessObject.getUserCard(id);
                 user.decreaseBalance(subtrahend);
-                LOGGER.info("The method of adding funds from the user's account was called, " +
+                LOGGER.info("The method of subtrahend funds from the user's account was called, " +
                         "\ndata after the change {}", user);
                 dataAccessObject.setUserCard(user);
                 return;

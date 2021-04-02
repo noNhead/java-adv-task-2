@@ -2,16 +2,19 @@ package org.example.service.operation;
 
 import org.example.service.BalanceOperationCallService;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Random;
 
 import static org.example.utils.Const.*;
 
 public class OperationTransfer implements Runnable {
-    private final Random random = new Random();
+    private final Random random;
     private final BalanceOperationCallService balanceOperationCallService;
 
-    public OperationTransfer(BalanceOperationCallService balanceOperationCallService) {
+    public OperationTransfer(BalanceOperationCallService balanceOperationCallService) throws NoSuchAlgorithmException {
         this.balanceOperationCallService = balanceOperationCallService;
+        this.random = SecureRandom.getInstanceStrong();
     }
 
     @Override
