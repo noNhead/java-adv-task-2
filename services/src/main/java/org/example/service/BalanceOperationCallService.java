@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 public class BalanceOperationCallService {
@@ -13,6 +14,7 @@ public class BalanceOperationCallService {
     private final DataAccessObject dataAccessObject = new DataAccessObject();
     private final Map<Long, User> usersId;
     private long successCounter = 0;
+    private final ReentrantLock locker = new ReentrantLock();
 
     public BalanceOperationCallService() {
         this.usersId = dataAccessObject.getAllUserCardName();
@@ -27,10 +29,12 @@ public class BalanceOperationCallService {
             Thread.currentThread().interrupt();
             return;
         }
+        locker.lock();
         User user = usersId.get(id);
         user.increaseBalance(added);
         usersId.replace(id, user);
         this.successCounter++;
+        locker.unlock();
         //LOGGER.info("The method of adding funds from the user's account was called, " +
         //        "\ndata after the change {}", user);
     }
@@ -44,9 +48,12 @@ public class BalanceOperationCallService {
             Thread.currentThread().interrupt();
             return;
         }
-        User user = dataAccessObject.getUserCard(id);
+        locker.lock();
+        User user = usersId.get(id);
         user.decreaseBalance(subtrahend);
+        usersId.replace(id, user);
         this.successCounter++;
+        locker.unlock();
         //LOGGER.info("The method of subtrahend funds from the user's account was called, " +
         //            "\ndata after the change {}", user);
     }
