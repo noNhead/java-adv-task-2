@@ -8,11 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Objects;
-import java.util.List;
-import java.util.Collections;
-import java.util.ArrayList;
-import java.util.Properties;
+import java.util.*;
 
 
 public class DataAccessObject {
@@ -40,22 +36,25 @@ public class DataAccessObject {
      * Получает все id и записывает их в List<Long id>
      * @return который потом и возвращает
      */
-    public List<Long> getAllUserCardName(){
+    public Map<Long, User> getAllUserCardName(){
         File file = new File(getPath());
         String[] fileNames = file.list();
         if (fileNames == null) {
             LOGGER.warn("A search for files in a folder was called, no files were found");
-            return Collections.emptyList();
+            return Collections.emptyMap();
         }
 
-        List<Long> ids = new ArrayList<>();
+        Map<Long, User> ids = new HashMap<>();
         for (String value: fileNames) {
             String[] strings = value.split("\\.");
-            ids.add(Long.valueOf(strings[0]));
+            ids.put(Long.valueOf(strings[0]), getUserCard(Long.valueOf(strings[0])));
         }
         return ids;
     }
 
+    public void setAllUserCards(Map<Long, User> usersCard) {
+        usersCard.forEach((k, v) -> setUserCard(v));
+    }
     /**
      * Получение адреса директории, где хранятся user-card из property
      * @return строку с адресом директории

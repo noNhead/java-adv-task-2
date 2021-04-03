@@ -18,6 +18,7 @@ public class OperationNewUserCard implements Runnable{
         for (int i = 0; i < MAX_USER_CARDS; i++) {
             User user = new User((long) i, "username", START_MONEY_TO_USER);
             balanceOperationCallService.newUserCard(user);
+
         }
     }
 }

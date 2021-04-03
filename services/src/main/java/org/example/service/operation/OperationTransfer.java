@@ -23,5 +23,6 @@ public class OperationTransfer implements Runnable {
         Long idInput = (long) this.random.nextInt(MAX_USER_CARDS + 1);
         Long amount = (long) this.random.nextInt(MAX_TRANSFER - MIN_TRANSFER + 1) + MIN_TRANSFER;
         this.balanceOperationCallService.transferValue(idOutput, idInput, amount);
+
     }
 }

@@ -30,5 +30,6 @@ public class OperationIncreaseMoney implements Runnable {
         Long id = (long) Objects.requireNonNull(random).nextInt(MAX_USER_CARDS + 1);
         Long amount = (long) random.nextInt(MAX_TRANSFER - MIN_TRANSFER + 1) + MIN_TRANSFER;
         this.balanceOperationCallService.increaseValueInUser(id, amount);
+
     }
 }

@@ -14,7 +14,7 @@ public class Main {
         try {
             lifecycle = new Lifecycle();
             lifecycle.process();
-        } catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException | InterruptedException e) {
             LOGGER.warn(String.valueOf(e));
         }
     }

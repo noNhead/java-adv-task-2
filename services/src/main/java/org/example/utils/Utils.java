@@ -9,8 +9,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
 
 public class Utils {
     private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
@@ -21,8 +19,6 @@ public class Utils {
      */
     public void serialize(String path, User user) {
         try (FileOutputStream fileOutputStream = new FileOutputStream(path);
-             FileChannel channel = fileOutputStream.getChannel();
-             FileLock lock = channel.lock();
              ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
             objectOutputStream.writeObject(user);
         } catch (IOException e) {
@@ -37,8 +33,6 @@ public class Utils {
      */
     public User deserialize(String path) {
         try (FileInputStream fileInputStream = new FileInputStream(path);
-             FileChannel channel = fileInputStream.getChannel();
-             FileLock lock = channel.lock(0, Long.MAX_VALUE, true);
              ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
             return (User) objectInputStream.readObject();
         } catch (ClassNotFoundException | IOException e) {
