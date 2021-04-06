@@ -7,7 +7,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
-    private final ReentrantLock locker = new ReentrantLock();
+    private Lock locker = new ReentrantLock();
     private Long id;
     private String username;
     private Long balance;

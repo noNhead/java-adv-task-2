@@ -1,6 +1,8 @@
 package org.example.service.operation;
 
 import org.example.service.BalanceOperationCallService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -9,6 +11,7 @@ import java.util.Random;
 import static org.example.utils.Const.*;
 
 public class OperationTransfer implements Runnable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OperationTransfer.class);
     private final Random random;
     private final BalanceOperationCallService balanceOperationCallService;
 
@@ -22,7 +25,23 @@ public class OperationTransfer implements Runnable {
         Long idOutput = (long) this.random.nextInt(MAX_USER_CARDS + 1);
         Long idInput = (long) this.random.nextInt(MAX_USER_CARDS + 1);
         Long amount = (long) this.random.nextInt(MAX_TRANSFER - MIN_TRANSFER + 1) + MIN_TRANSFER;
-        this.balanceOperationCallService.transferValue(idOutput, idInput, amount);
-
+        int i = 0;
+        while(true) {
+            short exitCodeValueTransfer = this.balanceOperationCallService
+                    .transferValue(idOutput, idInput, amount);
+            if (exitCodeValueTransfer == 0) {
+                break;
+            } else if (exitCodeValueTransfer == 1) {
+                LOGGER.warn("ЧТО-то пошло не так");
+                break;
+            } else {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    LOGGER.warn(String.valueOf(e));
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
     }
 }

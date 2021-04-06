@@ -38,7 +38,7 @@ public class BalanceOperationCallService {
         try {
             boolean flagToUserDec = userDecrease.getTryLock();
             boolean flagToUserInc = userIncrease.getTryLock();
-            if (flagToUserDec || flagToUserInc) {
+            if (flagToUserDec && flagToUserInc) {
                 LOGGER.info("In lock: {}", Thread.currentThread().getName());
                 usersId.get(idIncrease).increaseBalance(transferAmount);
                 usersId.get(idDecrease).decreaseBalance(transferAmount);
