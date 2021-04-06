@@ -17,7 +17,7 @@ public class Utils {
      * @param path путь к файлу
      * @param user объект из пользователя
      */
-    public void serialize(String path, User user) {
+    public static void serialize(String path, User user) {
         try (FileOutputStream fileOutputStream = new FileOutputStream(path);
              ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
             objectOutputStream.writeObject(user);
@@ -31,7 +31,7 @@ public class Utils {
      * @param path путь к файлу
      * @return возвращает строку с текстом
      */
-    public User deserialize(String path) {
+    public static User deserialize(String path) {
         try (FileInputStream fileInputStream = new FileInputStream(path);
              ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
             return (User) objectInputStream.readObject();

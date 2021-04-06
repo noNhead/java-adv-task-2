@@ -21,57 +21,26 @@ public class BalanceOperationCallService {
     }
 
     /**
-     * Добавляет средства на счёт
-     */
-    public synchronized void increaseValueInUser(Long id, Long added) {
-        if (usersId.get(id) == null) {
-            LOGGER.warn("operation increase: user not found");
-            Thread.currentThread().interrupt();
-            return;
-        }
-        locker.lock();
-        User user = usersId.get(id);
-        user.increaseBalance(added);
-        usersId.replace(id, user);
-        this.successCounter++;
-        locker.unlock();
-        //LOGGER.info("The method of adding funds from the user's account was called, " +
-        //        "\ndata after the change {}", user);
-    }
-
-    /**
-     * Убавляет средства со счёта
-     */
-    public synchronized void decreaseValueInUser(Long id, Long subtrahend) {
-        if (usersId.get(id) == null) {
-            LOGGER.warn("Operation decrease: user not found");
-            Thread.currentThread().interrupt();
-            return;
-        }
-        locker.lock();
-        User user = usersId.get(id);
-        user.decreaseBalance(subtrahend);
-        usersId.replace(id, user);
-        this.successCounter++;
-        locker.unlock();
-        //LOGGER.info("The method of subtrahend funds from the user's account was called, " +
-        //            "\ndata after the change {}", user);
-    }
-
-    /**
      * Переводит средства с одного счёта на другой
      */
-    public synchronized void transferValue(Long idDecrease, Long idIncrease, Long transferAmount) {
+    public void transferValue(Long idDecrease, Long idIncrease, Long transferAmount) {
         if (usersId.get(idDecrease) == null || usersId.get(idIncrease) == null) {
             LOGGER.warn("Transfer operation: user not found");
             Thread.currentThread().interrupt();
             return;
         }
-        decreaseValueInUser(idDecrease, transferAmount);
-        increaseValueInUser(idIncrease, transferAmount);
-        this.successCounter--;
-        //Здесь используется вычитание, потому что два вызывающих процесса
-        // уже увеличивают каждый значение счётчика на 1, то есть в сумме на 2
+        LOGGER.info("Transfer operation idDecrease: {}", idDecrease);
+        LOGGER.info("Transfer operation idIncrease: {}", idIncrease);
+        LOGGER.info("Transfer amount is: {}", transferAmount);
+        try {
+            locker.lock();
+            LOGGER.info("In lock");
+            usersId.get(idIncrease).increaseBalance(transferAmount);
+            usersId.get(idDecrease).decreaseBalance(transferAmount);
+        } finally {
+            locker.unlock();
+        }
+        this.successCounter++;
         //LOGGER.info("Transfer from two operations from above");
     }
 

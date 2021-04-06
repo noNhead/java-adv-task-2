@@ -1,7 +1,6 @@
 package org.example.dao;
 
 import org.example.User;
-import org.example.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,10 +9,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
+import static org.example.utils.Utils.deserialize;
+import static org.example.utils.Utils.serialize;
+
 
 public class DataAccessObject {
     private static final Logger LOGGER = LoggerFactory.getLogger(DataAccessObject.class);
-    private final Utils utils = new Utils();
 
     /**
      * получает карту через вызов метода десериализцаии в util.Utils
@@ -21,7 +22,7 @@ public class DataAccessObject {
      * @return возвращает объект класса User.class
      */
     public User getUserCard(Long id){
-        return utils.deserialize(getPath() + "/" + id.toString() + ".usr");
+        return deserialize(getPath() + "/" + id.toString() + ".usr");
     }
 
     /**
@@ -29,7 +30,7 @@ public class DataAccessObject {
      * @param user карточка пользователя
      */
     public void setUserCard(User user){
-        utils.serialize(getPath() + "/" +user.getId().toString() + ".usr", user);
+        serialize(getPath() + "/" +user.getId().toString() + ".usr", user);
     }
 
     /**

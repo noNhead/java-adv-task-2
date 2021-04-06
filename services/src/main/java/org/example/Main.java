@@ -10,12 +10,12 @@ public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
-        Lifecycle lifecycle = null;
         try {
-            lifecycle = new Lifecycle();
+            Lifecycle lifecycle = new Lifecycle();
             lifecycle.process();
-        } catch (NoSuchAlgorithmException | InterruptedException e) {
+        } catch (NoSuchAlgorithmException e) {
             LOGGER.warn(String.valueOf(e));
+            Thread.currentThread().interrupt();
         }
     }
 }
