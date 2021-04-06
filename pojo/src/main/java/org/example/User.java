@@ -1,12 +1,13 @@
 package org.example;
 
 import java.io.Serializable;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class User implements Serializable {
-    private static final ReentrantLock locker = new ReentrantLock();
     private static final long serialVersionUID = 1L;
+    private final ReentrantLock locker = new ReentrantLock();
     private Long id;
     private String username;
     private Long balance;
@@ -53,13 +54,16 @@ public class User implements Serializable {
     }
 
     public void lock(){
-        locker.lock();
+        this.locker.lock();
     }
 
     public void unlock(){
-        locker.unlock();
+        this.locker.unlock();
     }
 
+    public boolean getTryLock() throws InterruptedException {
+        return this.locker.tryLock(2, TimeUnit.SECONDS);
+    }
 
     @Override
     public String toString() {

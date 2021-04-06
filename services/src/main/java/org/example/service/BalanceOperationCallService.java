@@ -30,13 +30,32 @@ public class BalanceOperationCallService {
         LOGGER.info("Transfer operation idDecrease: {}", idDecrease);
         LOGGER.info("Transfer operation idIncrease: {}", idIncrease);
         LOGGER.info("Transfer amount is: {}", transferAmount);
+        boolean userDecreaseLockOperationFlag = false;
+        boolean userIncreaseLockOperationFlag = false;
         try {
-            usersId.get(idIncrease).lock();
-            usersId.get(idDecrease).lock();
-            LOGGER.info("In lock: {}", Thread.currentThread().getName());
-            usersId.get(idIncrease).increaseBalance(transferAmount);
-            usersId.get(idDecrease).decreaseBalance(transferAmount);
-            this.successCounter++;
+            userDecreaseLockOperationFlag = usersId.get(idDecrease).getTryLock();
+            userIncreaseLockOperationFlag = usersId.get(idIncrease).getTryLock();
+        } catch (InterruptedException e) {
+            LOGGER.warn(String.valueOf(e));
+            Thread.currentThread().interrupt();
+        }
+        LOGGER.info("tryLock for id Decrease -> {}", userDecreaseLockOperationFlag);
+        LOGGER.info("tryLock for id Increase -> {}", userIncreaseLockOperationFlag);
+        try {
+            if (userDecreaseLockOperationFlag && userIncreaseLockOperationFlag) {
+                usersId.get(idIncrease).lock();
+                usersId.get(idDecrease).lock();
+                LOGGER.info("In lock: {}", Thread.currentThread().getName());
+                usersId.get(idIncrease).increaseBalance(transferAmount);
+                usersId.get(idDecrease).decreaseBalance(transferAmount);
+                this.successCounter++;
+            } else {
+                usersId.get(idIncrease).unlock();
+                usersId.get(idIncrease).unlock();
+                LOGGER.info("In lock: {}", Thread.currentThread().getName());
+                usersId.get(idIncrease).increaseBalance(transferAmount);
+                usersId.get(idDecrease).decreaseBalance(transferAmount);
+            }
         } finally {
             usersId.get(idIncrease).unlock();
             usersId.get(idDecrease).unlock();
