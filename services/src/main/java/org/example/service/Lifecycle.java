@@ -40,6 +40,8 @@ public class Lifecycle {
             for (int i = Objects.requireNonNull(folder.list()).length; i <= MAX_USER_CARDS; i++) {
                 balanceOperationCallService.newUserCard(new User((long) i, "username", START_MONEY_TO_USER));
             }
+            // повторное создание, чтобы задать в память юзеров, которых не было там
+            balanceOperationCallService = new BalanceOperationCallService();
         }
 
         //Launching the application - calling the search for cards

@@ -53,16 +53,12 @@ public class User implements Serializable {
         this.balance -= decreaseNumber;
     }
 
-    public void lock(){
-        this.locker.lock();
-    }
-
     public void unlock(){
-        this.locker.unlock();
+        locker.unlock();
     }
 
     public boolean getTryLock() throws InterruptedException {
-        return this.locker.tryLock(2, TimeUnit.SECONDS);
+        return locker.tryLock();
     }
 
     @Override
