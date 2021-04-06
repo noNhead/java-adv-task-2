@@ -13,9 +13,12 @@ public class Main {
         try {
             Lifecycle lifecycle = new Lifecycle();
             lifecycle.process();
+
         } catch (NoSuchAlgorithmException e) {
             LOGGER.warn(String.valueOf(e));
             Thread.currentThread().interrupt();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }

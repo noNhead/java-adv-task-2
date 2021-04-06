@@ -28,7 +28,7 @@ public class Lifecycle {
      * В конце программы распечатать итоговые балансы по счетам.
      */
 
-    public void process() throws NoSuchAlgorithmException {
+    public void process() throws NoSuchAlgorithmException, InterruptedException {
         DataAccessObject dataAccessObject = new DataAccessObject();
         ExecutorService service = Executors.newFixedThreadPool(MAX_THREAD_IN_POOL);
         BalanceOperationCallService balanceOperationCallService = new BalanceOperationCallService();
@@ -46,16 +46,11 @@ public class Lifecycle {
 
         //Launching the application - calling the search for cards
         // from the folder specified in the property
-        for (int i = 0; i < MAX_OPERATION_IN_PROCESS; i++) {
-            service.submit(operationTransfer);
+        for (int i = 0; i <= MAX_OPERATION_IN_PROCESS; i++) {
+            service.execute(operationTransfer);
         }
         service.shutdown();
-        try {
-            service.awaitTermination(30, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            LOGGER.warn(String.valueOf(e));
-            Thread.currentThread().interrupt();
-        }
+        service.awaitTermination(15, TimeUnit.MILLISECONDS);
         LOGGER.info("successful operation: {}", balanceOperationCallService.getSuccessCounter());
         LOGGER.info("runnable operation: {}", balanceOperationCallService.getRunCounter());
         dataAccessObject.setAllUserCards(balanceOperationCallService.getUsersId());

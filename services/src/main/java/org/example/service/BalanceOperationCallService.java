@@ -24,7 +24,8 @@ public class BalanceOperationCallService {
      * Переводит средства с одного счёта на другой
      */
     public byte transferValue(Long idDecrease, Long idIncrease, Long transferAmount) {
-        runCounter.incrementAndGet();
+        System.out.println(runCounter.incrementAndGet());
+        System.out.println(successCounter.get());
         if (usersId.get(idDecrease) == null || usersId.get(idIncrease) == null) {
             LOGGER.warn("Transfer operation: user not found");
             Thread.currentThread().interrupt();
@@ -33,34 +34,24 @@ public class BalanceOperationCallService {
         //LOGGER.info(idDecrease + " " + idIncrease + " " + transferAmount);
 
 
-        try {
-            boolean flagToUserDec = usersId.get(idDecrease).getTryLock();
-            boolean flagToUserInc = usersId.get(idIncrease).getTryLock();
-            if (flagToUserDec && flagToUserInc) {
-                LOGGER.info("In lock: {}", Thread.currentThread().getName());
-                usersId.get(idIncrease).increaseBalance(transferAmount);
-                usersId.get(idDecrease).decreaseBalance(transferAmount);
-                this.successCounter.incrementAndGet();
-                return 0;
-            } else {
-                return 2;
-            }
-        } catch (InterruptedException e) {
-            LOGGER.warn(String.valueOf(e));
-            //Thread.currentThread().interrupt();
-        } finally {
+        if (lockerCheck(idDecrease, idIncrease)) {
+            LOGGER.info("In lock: {}", Thread.currentThread().getName());
+            usersId.get(idIncrease).increaseBalance(transferAmount);
+            usersId.get(idDecrease).decreaseBalance(transferAmount);
             usersId.get(idIncrease).unlock();
             usersId.get(idDecrease).unlock();
-            LOGGER.info("Out Lock: {}", Thread.currentThread().getName());
+            this.successCounter.incrementAndGet();
+            return 0;
+        } else {
+            return 2;
         }
-        return 3;
     }
 
-    public void newUserCard(User user){
+    public void newUserCard(User user) {
         dataAccessObject.setUserCard(user);
     }
 
-    public long getSuccessCounter(){
+    public long getSuccessCounter() {
         return this.successCounter.get();
     }
 
@@ -70,5 +61,32 @@ public class BalanceOperationCallService {
 
     public AtomicInteger getRunCounter() {
         return runCounter;
+    }
+
+    private boolean lockerCheck(Long idDecrease, Long idIncrease) {
+        boolean flagToUserDec = false;
+        boolean flagToUserInc = false;
+        boolean statement = false;
+        try {
+            flagToUserDec = usersId.get(idDecrease).getTryLock();
+            flagToUserInc = usersId.get(idIncrease).getTryLock();
+            if (flagToUserDec && flagToUserInc) {
+                statement = true;
+                return true;
+            }
+        } catch (InterruptedException e) {
+            LOGGER.warn(String.valueOf(e));
+            Thread.currentThread().interrupt();
+        } finally {
+            if (!statement) {
+                if (flagToUserDec) {
+                    usersId.get(idDecrease).unlock();
+                }
+                if (flagToUserInc) {
+                    usersId.get(idIncrease).unlock();
+                }
+            }
+        }
+        return false;
     }
 }

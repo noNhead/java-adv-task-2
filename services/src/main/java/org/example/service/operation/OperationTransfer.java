@@ -22,9 +22,9 @@ public class OperationTransfer implements Runnable {
 
     @Override
     public void run() {
-        Long idOutput = (long) this.random.nextInt(MAX_USER_CARDS + 1);
-        Long idInput = (long) this.random.nextInt(MAX_USER_CARDS + 1);
-        Long amount = (long) this.random.nextInt(MAX_TRANSFER - MIN_TRANSFER + 1) + MIN_TRANSFER;
+        final Long idOutput = (long) this.random.nextInt(MAX_USER_CARDS + 1);
+        final Long idInput = (long) this.random.nextInt(MAX_USER_CARDS + 1);
+        final Long amount = (long) this.random.nextInt(MAX_TRANSFER - MIN_TRANSFER + 1) + MIN_TRANSFER;
         int i = 0;
         while(true) {
             byte exitCodeValueTransfer = this.balanceOperationCallService
@@ -35,16 +35,14 @@ public class OperationTransfer implements Runnable {
             } else if (exitCodeValueTransfer == 1) {
                 LOGGER.warn("ЧТО-то пошло не так");
                 break;
-            } else if (exitCodeValueTransfer == 2) {
-                LOGGER.warn("залочено");
             } else {
-                LOGGER.warn("wtf");
                 try {
-                    Thread.sleep(200);
+                    Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     LOGGER.warn(String.valueOf(e));
                     Thread.currentThread().interrupt();
                 }
+                LOGGER.warn("залочено");
             }
         }
     }
