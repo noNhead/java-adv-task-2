@@ -1,8 +1,11 @@
 package org.example;
 
 import java.io.Serializable;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class User implements Serializable {
+    private static final ReentrantLock locker = new ReentrantLock();
     private static final long serialVersionUID = 1L;
     private Long id;
     private String username;
@@ -48,6 +51,15 @@ public class User implements Serializable {
     public void decreaseBalance(Long decreaseNumber) {
         this.balance -= decreaseNumber;
     }
+
+    public void lock(){
+        locker.lock();
+    }
+
+    public void unlock(){
+        locker.unlock();
+    }
+
 
     @Override
     public String toString() {

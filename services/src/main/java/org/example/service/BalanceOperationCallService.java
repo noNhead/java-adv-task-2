@@ -6,8 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 
 public class BalanceOperationCallService {
@@ -15,7 +13,6 @@ public class BalanceOperationCallService {
     private final DataAccessObject dataAccessObject = new DataAccessObject();
     private final Map<Long, User> usersId;
     private long successCounter = 0;
-    private final Lock locker = new ReentrantLock();
 
     public BalanceOperationCallService() {
         this.usersId = dataAccessObject.getAllUserCardName();
@@ -34,13 +31,15 @@ public class BalanceOperationCallService {
         LOGGER.info("Transfer operation idIncrease: {}", idIncrease);
         LOGGER.info("Transfer amount is: {}", transferAmount);
         try {
-            locker.lock();
+            usersId.get(idIncrease).lock();
+            usersId.get(idDecrease).lock();
             LOGGER.info("In lock: {}", Thread.currentThread().getName());
             usersId.get(idIncrease).increaseBalance(transferAmount);
             usersId.get(idDecrease).decreaseBalance(transferAmount);
             this.successCounter++;
         } finally {
-            locker.unlock();
+            usersId.get(idIncrease).unlock();
+            usersId.get(idDecrease).unlock();
             LOGGER.info("Out Lock: {}", Thread.currentThread().getName());
         }
     }
