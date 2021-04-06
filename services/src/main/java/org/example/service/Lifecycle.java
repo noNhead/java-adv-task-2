@@ -8,10 +8,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
-import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.security.SecureRandom;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -19,7 +17,6 @@ import org.slf4j.Logger;
 import static org.example.utils.Const.*;
 
 public class Lifecycle {
-    public static final int MAX_THREAD_IN_POOL = 20;
     private static final Logger LOGGER = LoggerFactory.getLogger(Lifecycle.class);
 
     /**

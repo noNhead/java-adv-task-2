@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 
@@ -14,7 +15,7 @@ public class BalanceOperationCallService {
     private final DataAccessObject dataAccessObject = new DataAccessObject();
     private final Map<Long, User> usersId;
     private long successCounter = 0;
-    private final ReentrantLock locker = new ReentrantLock();
+    private final Lock locker = new ReentrantLock();
 
     public BalanceOperationCallService() {
         this.usersId = dataAccessObject.getAllUserCardName();
@@ -34,25 +35,25 @@ public class BalanceOperationCallService {
         LOGGER.info("Transfer amount is: {}", transferAmount);
         try {
             locker.lock();
-            LOGGER.info("In lock");
+            LOGGER.info("In lock: {}", Thread.currentThread().getName());
             usersId.get(idIncrease).increaseBalance(transferAmount);
             usersId.get(idDecrease).decreaseBalance(transferAmount);
+            this.successCounter++;
         } finally {
             locker.unlock();
+            LOGGER.info("Out Lock: {}", Thread.currentThread().getName());
         }
-        this.successCounter++;
-        //LOGGER.info("Transfer from two operations from above");
     }
 
-    public synchronized void newUserCard(User user){
+    public void newUserCard(User user){
         dataAccessObject.setUserCard(user);
     }
 
-    public synchronized long getSuccessCounter(){
+    public long getSuccessCounter(){
         return this.successCounter;
     }
 
-    public synchronized Map<Long, User> getUsersId() {
+    public Map<Long, User> getUsersId() {
         return this.usersId;
     }
 }
