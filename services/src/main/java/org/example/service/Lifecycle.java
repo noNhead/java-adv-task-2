@@ -51,12 +51,13 @@ public class Lifecycle {
         }
         service.shutdown();
         try {
-            service.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+            service.awaitTermination(30, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             LOGGER.warn(String.valueOf(e));
             Thread.currentThread().interrupt();
         }
         LOGGER.info("successful operation: {}", balanceOperationCallService.getSuccessCounter());
+        LOGGER.info("runnable operation: {}", balanceOperationCallService.getRunCounter());
         dataAccessObject.setAllUserCards(balanceOperationCallService.getUsersId());
     }
 }

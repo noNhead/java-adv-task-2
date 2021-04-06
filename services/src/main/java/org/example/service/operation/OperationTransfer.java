@@ -27,14 +27,18 @@ public class OperationTransfer implements Runnable {
         Long amount = (long) this.random.nextInt(MAX_TRANSFER - MIN_TRANSFER + 1) + MIN_TRANSFER;
         int i = 0;
         while(true) {
-            short exitCodeValueTransfer = this.balanceOperationCallService
+            byte exitCodeValueTransfer = this.balanceOperationCallService
                     .transferValue(idOutput, idInput, amount);
             if (exitCodeValueTransfer == 0) {
+                LOGGER.warn("Всё пошло так");
                 break;
             } else if (exitCodeValueTransfer == 1) {
                 LOGGER.warn("ЧТО-то пошло не так");
                 break;
+            } else if (exitCodeValueTransfer == 2) {
+                LOGGER.warn("залочено");
             } else {
+                LOGGER.warn("wtf");
                 try {
                     Thread.sleep(200);
                 } catch (InterruptedException e) {
